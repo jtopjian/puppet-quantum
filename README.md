@@ -7,9 +7,7 @@ At the moment, this has only been tested on an all-in-one installation, although
 
 How to Use
 ----------
-First, use the [jtopjian-quantum](https://github.com/jtopjian/puppetlabs-nova/tree/jtopjian-quantum) branch of Nova.
-
-Next, set the `network_manager` to Quantum:
+Set the `network_manager` to Quantum in your OpenStack class:
 
 ```puppet
 class { 'openstack::all':
