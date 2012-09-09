@@ -12,8 +12,8 @@ class quantum::keystone::auth (
   $region             = 'RegionOne'
 ) {
 
-  Keystone_user_role["${auth_name}@services"] ~> Service <| name == 'quantum-registry' |>
-  Keystone_user_role["${auth_name}@services"] ~> Service <| name == 'quantum-api' |>
+  Class['keystone::db::sync'] -> Class['quantum::keystone::auth']
+  Keystone_user_role["${auth_name}@services"] ~> Service <| name == 'quantum-server' |>
 
   keystone_user { $auth_name:
     ensure   => present,
@@ -35,9 +35,9 @@ class quantum::keystone::auth (
     keystone_endpoint { $auth_name:
       ensure       => present,
       region       => $region,
-      public_url   => "http://${public_address}:${port}/v2.0",
-      admin_url    => "http://${admin_address}:${port}/v2.0",
-      internal_url => "http://${internal_address}:${port}/v2.0",
+      public_url   => "http://${public_address}:${port}",
+      admin_url    => "http://${admin_address}:${port}",
+      internal_url => "http://${internal_address}:${port}",
     }
   }
 }
