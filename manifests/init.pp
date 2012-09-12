@@ -1,3 +1,4 @@
+#
 class quantum (
   $keystone_password,
   $quantum_settings       = false,
@@ -71,12 +72,15 @@ class quantum (
     $ensure = 'stopped'
   }
 
-  service { $::quantum::params::service_name:
+  service { 'quantum':
+    name    => $::quantum::params::service_name,
     enable  => $enabled,
     ensure  => $ensure,
     require => Package[$::quantum::params::package_name],
-    subscribe => File[$::quantum::params::quantum_conf],
   }
+
+  Ini_setting<| tag == $::quantum::params::quantum_conf_tag |> ~> Service['quantum']
+  Ini_setting<| tag == $::quantum::params::quantum_paste_api_ini_tag |> ~> Service['quantum']
 
   # This is a hack. Most likely a bug in the Ubuntu package
   #file { '/usr/lib/python2.7/dist-packages/bin/nova-dhcpbridge':

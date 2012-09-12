@@ -48,16 +48,25 @@ class quantum::dhcp (
     multini($::quantum::params::quantum_dhcp_agent_ini, $keystone_settings)
   }
 
+
+  # Hopefully only temporary
+  file { '/etc/init/quantum-dhcp-agent.conf':
+    source => 'puppet:///modules/quantum/quantum-dhcp-agent.conf',
+  }
+
   if $enabled {
     $ensure = 'running'
   } else {
     $ensure = 'stopped'
   }
 
-  service { $::quantum::params::dhcp_service:
+  service { 'quantum-dhcp':
+    name    => $::quantum::params::dhcp_service,
     enable  => $enabled,
     ensure  => $ensure,
     require => [Package[$::quantum::params::dhcp_package], Class['quantum']],
     subscribe => File[$::quantum::params::quantum_dhcp_agent_ini],
   }
+
+  Ini_setting<| tag == $::quantum::params::quantum_dhcp_agent_ini_tag |> ~> Service['quantum-dhcp']
 }

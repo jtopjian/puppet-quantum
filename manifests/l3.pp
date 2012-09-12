@@ -54,10 +54,12 @@ class quantum::l3 (
     $ensure = 'stopped'
   }
 
-  service { $::quantum::params::l3_service:
+  service { 'quantum-l3':
+    name    => $::quantum::params::l3_service,
     enable  => $enabled,
     ensure  => $ensure,
     require => [Package[$::quantum::params::l3_package], Class['quantum']],
-    subscribe => File[$::quantum::params::quantum_l3_agent_ini],
   }
+
+  Ini_setting<| tag == $::quantum::params::quantum_l3_agent_ini_tag |> ~> Service['quantum-l3']
 }
